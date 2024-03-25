@@ -1,5 +1,6 @@
 # qrcode-file-transfer
-A Python package that can be used to transfer files with QR codes. Input a file, get QR code images. Print, email, or otherwise share your codes. Re-input these QR codes, get your original file back.
+
+This Python-based client-server application facilitates data transfer using QR codes. It employs cameras on both the server and client sides to scan QR codes, enabling seamless data transmission.
 
 # Protocol diagram
 
@@ -43,4 +44,3 @@ A Python package that can be used to transfer files with QR codes. Input a file,
 ## From source without installing
 1. Clone the repo
 2. Install dependencies via `pip install -r requirements.txt`
-3. Invoke the module from the root of the repo: `python -m qrcode_file_transfer <args>`
