@@ -29,7 +29,7 @@ def main():
     # Create the window
     sg.theme('LightGreen')
     layout = [
-        [sg.Text('Server3', size=(40, 1), justification='center', font='Helvetica 20')],
+        [sg.Text('Server', size=(40, 1), justification='center', font='Helvetica 20')],
         [sg.Text('Path to file'), sg.In(size=(50,10), key='input', enable_events=True), sg.FileBrowse()],
         [sg.Frame(title='Configurations:', size=(430,80),layout=[
             [ sg.Text('Camera:  '), sg.Combo(cameras_list, default_value='0', key='caemra_index', size=(10, 1))],
