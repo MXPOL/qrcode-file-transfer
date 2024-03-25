@@ -1,0 +1,10 @@
+
+
+
+QR_IMG_SIZE = (600,600)
+WEB_IMG_SIZE = (250,250)
+DATA_PER_CHUNK_BYTES_OPTION = [256, 512, 1024]
+
+TEMP_SERVER_DIR = 'server_temp'
+TEMP_CLIENT_DIR = 'client_temp'
+OUTPUT_DIR = 'received_files'
