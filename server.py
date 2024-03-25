@@ -23,7 +23,8 @@ def main():
     
     # Capture and Camera 
     video_capture = None
-    cameras_list = [0,1]  # get_camera_list()
+    cameras_list = [0, 1]
+    # cameras_list = get_camera_list()
 
     # Create the window
     sg.theme('LightGreen')
@@ -56,6 +57,8 @@ def main():
     # Initial status of the server
     status = TransferStatus.SERVER_NOT_READY.value
     
+    camera_index = None
+    
 
 
     # CURRENT STATUS
@@ -87,6 +90,11 @@ def main():
             window["qr-image"].update(data=current_gui_img_in_bytes)
             update_qr_img = False
 
+        if values['caemra_index'] != camera_index:
+            print(f"Camera index: {values['caemra_index']}")
+            camera_index = int(values["caemra_index"])
+            video_capture = cv2.VideoCapture(camera_index)
+        
         # if file path is selected
         if event == "input":
             file_full_path = values["input"]
@@ -108,6 +116,12 @@ def main():
         
         elif event == 'caemra_index':
             print(f"Camera index: {values['caemra_index']}")
+            
+        elif event == 'caemra_index':
+            print(f"Camera index: {values['caemra_index']}")
+            camera_index = int(values["caemra_index"])
+            video_capture = cv2.VideoCapture(camera_index)
+            
         
     
         elif event == 'Stop Camera':

@@ -26,8 +26,9 @@ from const import OUTPUT_DIR, TEMP_CLIENT_DIR, WEB_IMG_SIZE
 def main():
     
     # Capture and Camera 
-    video_capture = cv2.VideoCapture(0)
-    cameras_list = [0,1] #get_camera_list()
+    video_capture = None
+    cameras_list = [0, 1]
+    # cameras_list = get_camera_list()
     
     
     # Create the window
@@ -60,6 +61,8 @@ def main():
     # Current Status
     status = TransferStatus.CLIENT_NOT_READY.value
     
+    camera_index = None
+    
     current_chunk = 0
     total_chunks = 0
     input_file_name = None
@@ -89,14 +92,20 @@ def main():
         if update_qr_img:
             window["qr-image"].update(data=current_qr_status_img_bytes)
             update_qr_img = False
+            
+    
+        if values['caemra_index'] != camera_index:
+            print(f"Camera index: {values['caemra_index']}")
+            camera_index = int(values["caemra_index"])
+            video_capture = cv2.VideoCapture(camera_index)
+        
         
         if event in (sg.WIN_CLOSED, 'Exit'):
             break
-        
+                
         elif event == 'Stop Camera':
             show_camera = False
             window['web-image'].Update(visible=False)
-            # window["qr-image"].update(data=current_qr_status_img_bytes)
             
         elif event == 'Show Camera':
             if video_capture is None:
@@ -106,6 +115,10 @@ def main():
             window['web-image'].Update(visible=True)
         
         elif event == 'Start Client':
+            if video_capture is None:
+                camera_index = int(values["caemra_index"])
+                video_capture = cv2.VideoCapture(camera_index)
+            
             status = status = TransferStatus.CLIENT_READY.value
             
         if status == TransferStatus.CLIENT_READY.value:
