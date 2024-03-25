@@ -13,6 +13,8 @@ A Python package that can be used to transfer files with QR codes. Input a file,
 
 ## Example
 
+![client](./client.png)
+
 
 ## Tips
 

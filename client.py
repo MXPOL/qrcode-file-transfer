@@ -56,7 +56,7 @@ def main():
         ]
     ]
     
-    window = sg.Window('Client2', layout, margins=(10, 0), size=(1100, 1100), element_justification='c')
+    window = sg.Window('Client', layout, margins=(10, 0), size=(1100, 1100), element_justification='c')
     
     # Current Status
     status = TransferStatus.CLIENT_NOT_READY.value
