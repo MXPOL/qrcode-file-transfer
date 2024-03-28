@@ -6,11 +6,6 @@ This Python-based client-server application facilitates data transfer using QR c
 
 ![diagram](./diagram.png)
 
-# Usage
-
-
-## Arguments
-
 
 ## Example
 
@@ -28,6 +23,8 @@ This Python-based client-server application facilitates data transfer using QR c
 # Installation
 ## Requirements
 * Python 3
+* Imutils
+* PySimpleGUI
 * Encode
   * qrcode
   * Image
@@ -36,11 +33,14 @@ This Python-based client-server application facilitates data transfer using QR c
   * numpy
   * zbar-py
 
-## From source
-1. Clone the repository
-2. Run `make install`
-    * This command uses pip to install a wheel. If you are using a python virtual environment, be sure to activate it before installing.
 
 ## From source without installing
+### Server
 1. Clone the repo
 2. Install dependencies via `pip install -r requirements.txt`
+3. Run the server by running the following command `python server.py`
+
+### Client
+1. Clone the repo
+2. Install dependencies via `pip install -r requirements.txt`
+3. Run the server by running the following command `python client.py`
