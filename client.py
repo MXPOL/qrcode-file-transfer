@@ -48,7 +48,10 @@ def main():
         [sg.Frame(title='Configurations:', size=(430,80),layout=configuration_layout)],
         [sg.Button('Start Client', size=(30, 1), font='Helvetica 14')],
         [sg.Frame(title='Status:', size=(430,70),layout=[ [sg.Text(key='current_chunk'),sg.Text('', key='current_status')] ])],
-        [sg.Column([[sg.Image(key="web-image")]], element_justification='left', vertical_alignment='top'), sg.Column([[sg.Image(key="qr-image")]], element_justification='c')],  
+        [
+        sg.Column([[sg.Image(key="web-image")], [sg.Text("Camera", font='Helvetica 20', visible=False, size=(20, 1), justification='center', key='camera_text')]], element_justification='left', vertical_alignment='top'),
+        sg.Column([[sg.Image(key="qr-image")]], element_justification='c')
+        ],
         [
             sg.Button('Show Camera', size=(15, 1), font='Helvetica 14'),
             sg.Button('Stop Camera', size=(10, 1), font='Any 14'),
@@ -68,9 +71,10 @@ def main():
     input_file_name = None
     qr_images_arr = []
     recived_file_path = None
-    # Const
+    qr_fill_color = 'black'
+    qr_back_color = 'white'
+
     
-    output_folder = 'out_client'
     
     
     update_qr_img = False
@@ -94,10 +98,11 @@ def main():
             update_qr_img = False
             
     
-        if values['caemra_index'] != camera_index:
+        if camera_index != None and values['caemra_index'] != camera_index:
             print(f"Camera index: {values['caemra_index']}")
             camera_index = int(values["caemra_index"])
             video_capture = cv2.VideoCapture(camera_index)
+            window["camera_text"].update(f"Camera {camera_index}")
         
         
         if event in (sg.WIN_CLOSED, 'Exit'):
@@ -106,6 +111,7 @@ def main():
         elif event == 'Stop Camera':
             show_camera = False
             window['web-image'].Update(visible=False)
+            window['camera_text'].Update(visible=False)
             
         elif event == 'Show Camera':
             if video_capture is None:
@@ -113,17 +119,23 @@ def main():
                 video_capture = cv2.VideoCapture(camera_index)
             show_camera = True
             window['web-image'].Update(visible=True)
+            window["camera_text"].update(f"Camera {camera_index}")
+            window['camera_text'].Update(visible=True)
         
         elif event == 'Start Client':
             if video_capture is None:
                 camera_index = int(values["caemra_index"])
                 video_capture = cv2.VideoCapture(camera_index)
             
+            qr_fill_color = values['qr_fill_color']
+            qr_back_color = values['qr_back_color']
+            print(qr_fill_color, qr_back_color)
             status = status = TransferStatus.CLIENT_READY.value
             
         if status == TransferStatus.CLIENT_READY.value:
             status = TransferStatus.LOOKING_FOR_SERVER.value
-            current_qr_status_img_bytes = qr_data_into_img_bytes(status)
+
+            current_qr_status_img_bytes = qr_data_into_img_bytes(qr_fill_color, qr_back_color, status)
             update_qr_img = True
             
         
@@ -132,7 +144,7 @@ def main():
             if qr_obj:
                 if qr_obj["status"] ==  TransferStatus.CONNECTION_START.value:
                     status = TransferStatus.WATTING_FOR_FILE_INFO.value
-                    current_qr_status_img_bytes = qr_data_into_img_bytes(status)
+                    current_qr_status_img_bytes = qr_data_into_img_bytes(qr_fill_color, qr_back_color, status)
                     update_qr_img = True
         
         elif status == TransferStatus.WATTING_FOR_FILE_INFO.value:
@@ -146,7 +158,7 @@ def main():
                     
                     # update status for the next gui update
                     status = TransferStatus.WAIT_FOR_DATA_CHUNK.value
-                    current_qr_status_img_bytes = qr_data_into_img_bytes(status,input_file_name, total_chunks, current_chunk)
+                    current_qr_status_img_bytes = qr_data_into_img_bytes(qr_fill_color, qr_back_color, status,input_file_name, total_chunks, current_chunk)
                     update_qr_img = True
                 
         elif status == TransferStatus.WAIT_FOR_DATA_CHUNK.value:
@@ -165,11 +177,11 @@ def main():
                         
                         if (int(current_chunk) == (total_chunks - 1)):
                             status = TransferStatus.CLIENT_RECIVED_ALL_DATA_CHUNKS.value
-                            current_qr_status_img_bytes = qr_data_into_img_bytes(status)
+                            current_qr_status_img_bytes = qr_data_into_img_bytes(qr_fill_color, qr_back_color, status)
                             update_qr_img = True
                         else:
                             status = TransferStatus.RECIVED_DATA_CHUNK.value
-                            current_qr_status_img_bytes = qr_data_into_img_bytes(status, input_file_name, total_chunks, current_chunk)
+                            current_qr_status_img_bytes = qr_data_into_img_bytes(qr_fill_color, qr_back_color, status, input_file_name, total_chunks, current_chunk)
                             update_qr_img = True
                             current_chunk += 1
                     
@@ -180,7 +192,7 @@ def main():
                 if qr_obj["status"] ==  TransferStatus.READY_TO_SEND_NEXT_CHUNK.value:
                     if qr_obj["currentChunk"] == current_chunk:
                         status = TransferStatus.WAIT_FOR_DATA_CHUNK.value
-                        current_qr_status_img_bytes = qr_data_into_img_bytes(status, input_file_name, total_chunks, current_chunk)
+                        current_qr_status_img_bytes = qr_data_into_img_bytes(qr_fill_color, qr_back_color, status, input_file_name, total_chunks, current_chunk)
                         update_qr_img = True
                         
         elif status == TransferStatus.CLIENT_RECIVED_ALL_DATA_CHUNKS.value:

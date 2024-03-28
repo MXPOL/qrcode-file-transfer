@@ -175,11 +175,8 @@ def data_info_to_qr(status, name, total_chunks, qr_fill_color, qr_back_color):
     return qr_file
             
 
-def qr_data_into_img_bytes(status, name = "", total_chunks = "", current_chunk=0, data = ""):
+def qr_data_into_img_bytes(fill_color, back_color, status, name = "", total_chunks = "", current_chunk=0, data = ""):
     
-    fill_color = 'black'
-    back_color = 'white'
-
     payload = { 
         'status': status,
         'name': name,

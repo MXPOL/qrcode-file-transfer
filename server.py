@@ -45,8 +45,10 @@ def main():
             [sg.Text(key='current_chunk'),sg.Text('', key='current_status')],
             ])
         ],
-        [sg.Column([[sg.Image(key="web-image")]], element_justification='left', vertical_alignment='top'), sg.Column([[sg.Image(key="qr-image")]], element_justification='c')],
         [
+        sg.Column([[sg.Image(key="web-image")], [sg.Text("Camera", font='Helvetica 20', visible=False, size=(20, 1), justification='center', key='camera_text')]], element_justification='left', vertical_alignment='top'),
+        sg.Column([[sg.Image(key="qr-image")]], element_justification='c')
+        ],        [
         sg.Button('Show Camera', size=(15, 1), font='Helvetica 14'),
         sg.Button('Stop Camera', size=(10, 1), font='Any 14'),
         sg.Button('Exit', size=(10, 1), font='Helvetica 14'), 
@@ -90,10 +92,11 @@ def main():
             window["qr-image"].update(data=current_gui_img_in_bytes)
             update_qr_img = False
 
-        if values['caemra_index'] != camera_index:
+        if camera_index != None and values['caemra_index'] != camera_index:
             print(f"Camera index: {values['caemra_index']}")
             camera_index = int(values["caemra_index"])
             video_capture = cv2.VideoCapture(camera_index)
+            window["camera_text"].update(f"Camera {camera_index}")
         
         # if file path is selected
         if event == "input":
@@ -127,6 +130,7 @@ def main():
         elif event == 'Stop Camera':
             show_camera = False
             window['web-image'].Update(visible=False)
+            window['camera_text'].Update(visible=False)
             
         elif event == 'Show Camera':
             if video_capture is None:
@@ -134,6 +138,8 @@ def main():
                 video_capture = cv2.VideoCapture(camera_index)
             show_camera = True
             window['web-image'].Update(visible=True)
+            window["camera_text"].update(f"Camera {camera_index}")
+            window['camera_text'].Update(visible=True)
 
         elif event == 'Start Server':
             
@@ -174,7 +180,7 @@ def main():
                     status = TransferStatus.CONNECTION_START.value
                     # update GUI img in the next iteration
                     # create a qr image with CONNECTION_START status
-                    current_gui_img_in_bytes = qr_data_into_img_bytes(status,input_file_name,total_chunks, current_chunk)
+                    current_gui_img_in_bytes = qr_data_into_img_bytes(qr_fill_color, qr_back_color, status,input_file_name,total_chunks, current_chunk)
                     # in the next GUI iteration, gui image will be updated
                     update_qr_img = True
 
@@ -186,7 +192,7 @@ def main():
                     status = TransferStatus.DATA_INFO.value
                     # update GUI img in the next iteration
                     # create a qr image with DATA_INFO status
-                    current_gui_img_in_bytes = qr_data_into_img_bytes(status,input_file_name,total_chunks, current_chunk)
+                    current_gui_img_in_bytes = qr_data_into_img_bytes(qr_fill_color, qr_back_color, status,input_file_name,total_chunks, current_chunk)
                     # in the next GUI iteration, gui image will be updated
                     update_qr_img = True
                     
@@ -194,7 +200,7 @@ def main():
         elif status == TransferStatus.DATA_INFO.value:
             print("DATA_INFO")
             # Create a qr image with DATA_INFO status and input file name and total chunks
-            # current_gui_img_in_bytes = qr_data_into_img_bytes(status, input_file_name, total_chunks)
+            # current_gui_img_in_bytes = qr_data_into_img_bytes(qr_fill_color, qr_back_color, status, input_file_name, total_chunks)
             # in the next GUI iteration, we will update the qr image
             # update_qr_img = True
             
@@ -231,7 +237,7 @@ def main():
                     if qr_obj["currentChunk"] == current_chunk:
                         current_chunk += 1
                         status = TransferStatus.READY_TO_SEND_NEXT_CHUNK.value
-                        current_gui_img_in_bytes = qr_data_into_img_bytes(status,input_file_name,total_chunks, current_chunk)
+                        current_gui_img_in_bytes = qr_data_into_img_bytes(qr_fill_color, qr_back_color, status,input_file_name,total_chunks, current_chunk)
                         # in the next GUI iteration, gui image will be updated
                         update_qr_img = True
                         
